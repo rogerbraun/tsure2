@@ -1,0 +1,9 @@
+%ul  
+  - Chapter.get(chapter).comments.each do |comment|
+    Autor: 
+    %strong= comment.owner.force_encoding("UTF-8")
+    %br/
+    Tags:
+    %strong= comment.tags.force_encoding("UTF-8")
+    %li= comment.body.force_encoding("UTF-8")
+

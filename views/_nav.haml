@@ -1,0 +1,9 @@
+- pages = {"/" => "Home","/chapters" => "Kapitel"}
+.hlist 
+  %ul
+    - pages.each do |link, text|
+      %li
+        - if cpage != link
+          %a{:href => link}= text
+        - else
+          %a.active{:href => link}= text 
