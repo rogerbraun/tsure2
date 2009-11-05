@@ -1,0 +1,19 @@
+.page
+  #header
+    =partial("topnav")
+  #nav
+    =partial("nav", :locals=> {:cpage=>"/login"})
+  #main
+    #col1
+    #col3
+      #col3_content.clearfix
+        %p Platzhalterseite.
+        %form.openid_login{:method => "post",
+        %"accept-charset"=>"UTF-8",:action=> "login/openid"}
+          %label{:for =>"openid_identifier"} Your OpenID:
+          %input{:type =>"text", :name =>"openid_identifier", :style=>"background: url(http://openid.net/images/login-bg.gif) no-repeat #FFF 5px; padding-left: 25px;"}
+          %input{:type => "submit", :value => "login"}
+	    
+  #footer
+    =partial("footer")    
+
