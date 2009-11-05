@@ -4,6 +4,10 @@ require 'haml'
 require 'dm-core'
 require 'dm-aggregates'
 
+gem 'ruby-openid', '>=2.1.2'
+require 'openid'
+require 'openid/store/filesystem'
+
 helpers do
 
 def partial(name, options = {})
@@ -41,14 +45,30 @@ class Comment
   property :tags, Text
   property :owner, String
   property :body, String
-  
+  property :parent, Integer, :default => 0 
+  property :created_at, DateTime
+  property :modified_at, DateTime
+
   belongs_to :chapter
 end
 
-#Chapter.auto_migrate! 
-#Comment.auto_migrate!
-
+#Chapter.auto_upgrade! 
+#Comment.auto_upgrade!
+  def openid_consumer
+    @openid_consumer ||= OpenID::Consumer.new(session,
+        OpenID::Store::Filesystem.new("#{File.dirname(__FILE__)}/tmp/openid"))  
+  end
+ 
+  def root_url
+    request.url.match(/(^.*\/{2}[^\/]*)/)[1]
+  end
 get '/' do
+  @chapters = Chapter.all
+  @chapter_count = Hash.new
+  @chapters.each do |chapter|
+    @chapter_count[chapter.id] = chapter.comments.count
+  end 
+  @most_commented = @chapter_count.sort{|a,b| a[1]<=>b[1]}.reverse
   haml :index 
 end
 
@@ -97,4 +117,36 @@ post '/comment/:chapter' do
   c.save
   session["owner"] = params[:owner]
   redirect "/show_chapter/#{params[:chapter]}" 
+end
+
+get '/login' do    
+  haml :login
+end
+
+post '/login/openid' do
+  openid = params[:openid_identifier]
+  begin
+    oidreq = openid_consumer.begin(openid)
+  rescue OpenID::DiscoveryFailure => why
+    "Sorry, we couldn't find your identifier '#{openid}'"
+  else
+    oidreq.add_extension_arg('sreg','required','email')	  
+    redirect oidreq.redirect_url(root_url, root_url + "/login/openid/complete")
+  end
+end
+
+get '/login/openid/complete' do
+  oidresp = openid_consumer.complete(params, request.url)
+
+  case oidresp.status
+    when OpenID::Consumer::FAILURE
+      "Did not work ;_;"
+    when OpenID::Consumer::SETUP_NEEDED
+      "Request failed, setup needed"
+    when OpenID::Consumer::CANCEL
+      "Login cancelled."
+    when OpenID::Consumer::SUCCESS
+      "Login successfull! Hallo
+      #{params.to_s},#{oidresp.extension_response('http://openid.net/sreg/1.0',false).to_s}"
+  end
 end

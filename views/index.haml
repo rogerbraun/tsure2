@@ -8,6 +8,11 @@
     #col3
       #col3_content.clearfix
         %p Platzhalterseite.
+        - @most_commented.each do |id,count|
+          %p
+            Kapitel:
+            %a{:href =>"show_chapter/#{id}"}= id
+            = "Kommentare: #{count}"        
   #footer
     =partial("footer")    
 

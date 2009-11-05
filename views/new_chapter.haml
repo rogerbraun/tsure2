@@ -1,9 +1,17 @@
-%html(xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en")
-  %script{:type =>"text/javascript", :src => "/javascripts/ckeditor/ckeditor.js"}
-
-  %body
-    #content
-      %form{:action => "/new_chapter", :method => "post"}
-        %input{:type =>"text", :name => "title"}
-        %textarea.ckeditor{:id => "editor1", :name=> "body"}
-        %input{:type => "submit", :value => "Submit!"}
+.page
+  #header
+    =partial("topnav")
+  #nav
+    =partial("nav", :locals=> {:cpage=>"/chapters"})
+  #main
+    #col1
+    #col3
+      #col3_content.clearfix
+        %a{:id=>"content", :name =>"content"}
+        %h2 Neuen Abschnitt erstellen: 
+        %form{:action => "new_chapter", :method => "post"}
+          %input{:type => "text", :name => "title"}
+          %textarea.ckeditor{:id => "new_chapter_editor", :name =>"body"}
+          %input{:type => "submit", :value => "Fertig!"}
+  #footer
+    =partial("footer")    
