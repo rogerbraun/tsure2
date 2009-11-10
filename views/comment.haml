@@ -7,14 +7,7 @@
     #col1
     #col3
       #col3_content.clearfix
-        %form{:action => "/comment/#{@chapter}", :method => "post"}
-          Name:        
-          %input{:type =>"text", :name => "owner", :value => session["owner"].to_s}
-          %br/
-          Tags:
-          %input{:type =>"text", :name => "tags"}
-          %textarea.ckeditor{:id => "editor1", :name=> "body"}
-          %input{:type => "submit", :value => "Submit!"}
+        =partial("comment_form")
   #footer
     =partial("footer")    
 

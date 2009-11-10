@@ -52,8 +52,8 @@ class Comment
   belongs_to :chapter
 end
 
-#Chapter.auto_upgrade! 
-#Comment.auto_upgrade!
+Chapter.auto_upgrade! 
+Comment.auto_upgrade!
   def openid_consumer
     @openid_consumer ||= OpenID::Consumer.new(session,
         OpenID::Store::Filesystem.new("#{File.dirname(__FILE__)}/tmp/openid"))  
@@ -105,7 +105,11 @@ end
 
 get '/comment/:chapter' do
    @chapter = params[:chapter]
-   haml :comment
+   if !request.xhr? then
+     haml :comment
+   else
+     partial(:comment_form)
+   end
 end
 
 post '/comment/:chapter' do
