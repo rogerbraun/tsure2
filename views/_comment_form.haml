@@ -1,0 +1,11 @@
+%form{:action => "/comment/#{@chapter}", :method => "post"}
+  Name:        
+  %input{:type =>"text", :name => "owner", :value => session["owner"].to_s}
+  %br/
+  Tags:
+  %input{:type =>"text", :name => "tags"}
+  %textarea{:id => "editor1", :name=> "body"}
+  :javascript
+    CKEDITOR.replace('editor1');
+  %input{:type => "submit", :value => "Submit!"}
+
